@@ -7,7 +7,7 @@
             "isBuildCommand": true,
             "command": "${userHome}/.pico-sdk/ninja/v1.12.1/ninja",
             "args": ["-C", "${workspaceFolder}/build"],
-            "group": "build",
+            "group": "build", 
             "presentation": {
                 "reveal": "always",
                 "panel": "dedicated"
@@ -33,7 +33,7 @@
             "problemMatcher": [],
             "windows": {
                 "command": "${env:USERPROFILE}/.pico-sdk/picotool/2.1.0/picotool/picotool.exe"
-            },
+            }
         },
         {
             "label": "Run Project",
@@ -52,7 +52,27 @@
             "windows": {
                 "command": "${env:USERPROFILE}/.pico-sdk/picotool/2.1.0/picotool/picotool.exe"
             },
-            "dependsOn": ["Enter Bootsel"]
+            "group": "build"  // Same group as Compile Project
+        },
+        {
+            "label": "Run Project - BOOTSEL",
+            "type": "process",
+            "command": "${env:HOME}/.pico-sdk/picotool/2.1.0/picotool/picotool",
+            "args": [
+                "load", 
+                "${command:raspberry-pi-pico.launchTargetPath}", 
+                "-fx"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": [],
+            "windows": {
+                "command": "${env:USERPROFILE}/.pico-sdk/picotool/2.1.0/picotool/picotool.exe"
+            },
+            "dependsOn": ["Enter Bootsel"],
+            "group": "build"  // Same group as Compile Project and Run Project
         },
         {
             "label": "Flash",
