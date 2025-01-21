@@ -64,6 +64,7 @@ void playNoteWithVolume(int frequency, int duration, int volumePercent) {
 bool musicCallback(repeating_timer_t *timer) {
     if (!musicState.playing || musicState.noteIndex >= 17) {
         musicState.playing = false;
+        finishedMusic();
         return false; // Cancela o timer
     }
 
@@ -113,4 +114,9 @@ void playErrorSound() {
         playNoteWithVolume(errorNotes[i], errorDuration, volume);
         busy_wait_ms(50);
     }
+}
+
+void finishedMusic() {
+    printf("Musica Finalizada");
+    showText("Musica Finalizada!", 0, 0, 1, true);
 }

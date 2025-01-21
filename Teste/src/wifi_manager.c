@@ -1,4 +1,5 @@
 #include "wifi_manager.h"
+#include "display.h"
 
 void failureAction(char *debug){
     printf("%s", debug);
@@ -32,6 +33,7 @@ int init_wifi() {
 int connect_wifi(const char *ssid, const char *password) {
     printf("Connecting to Wi-Fi...\n");
     if (cyw43_arch_wifi_connect_timeout_ms(ssid, password, CYW43_AUTH_WPA2_AES_PSK, 10000)) {
+        showText("Failed to connect.", 0, 0, 1, true);
         failureAction("Failed to connect.\n");
         return -1;
     }
@@ -41,6 +43,20 @@ int connect_wifi(const char *ssid, const char *password) {
 
 // Imprime o endereço IP
 void print_ip_address() {
+    // Obtém o endereço IP do estado da interface de rede
     uint8_t *ip_address = (uint8_t*)&(cyw43_state.netif[0].ip_addr.addr);
-    printf("IP address %d.%d.%d.%d\n", ip_address[0], ip_address[1], ip_address[2], ip_address[3]);
+
+    // Buffer para armazenar o IP formatado como string
+    char formatedIP[32];
+
+    // Formata o endereço IP em forma de string
+    snprintf(formatedIP, sizeof(formatedIP), "%d.%d.%d.%d",
+             ip_address[0], ip_address[1], ip_address[2], ip_address[3]);
+
+    // Imprime o endereço IP no console
+    printf(formatedIP);
+
+    // Exibe o endereço IP no display OLED
+    showText("IP address:", 0, 0, 1, true);
+    showText(formatedIP, 0, 10, 1, false);
 }
