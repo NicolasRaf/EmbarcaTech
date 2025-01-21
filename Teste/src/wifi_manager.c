@@ -3,7 +3,7 @@
 void failureAction(char *debug){
     printf("%s", debug);
     gpio_put(RED_LED_PIN, 1);
-    // playErrorSound();
+    playErrorSound();
     sleep_ms(100);
     gpio_put(RED_LED_PIN, 0);
 }
@@ -11,7 +11,7 @@ void failureAction(char *debug){
 void succeedAction(char *debug){
     printf("%s", debug);
     gpio_put(GREEN_LED_PIN, 1);
-    // playConfirmSound();
+    playConfirmSound();
     sleep_ms(1000);
     gpio_put(GREEN_LED_PIN, 0);
 }

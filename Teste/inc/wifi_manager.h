@@ -3,6 +3,7 @@
 
 #include "pico/stdlib.h"
 #include "pico/cyw43_arch.h"
+#include "music.h"
 
 #define WIFI_SSID "HUAWEI-2.4G-S7mw"
 #define WIFI_PASSWORD "labirasifpi"

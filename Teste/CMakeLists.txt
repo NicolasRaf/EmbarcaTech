@@ -39,7 +39,9 @@ pico_sdk_init()
 add_executable(Teste 
     ./src/Teste.c
     ./src/server.c
-    ./src/wifi_manager.c)
+    ./src/wifi_manager.c
+    ./src/music.c
+    )
 
 pico_set_program_name(Teste "Teste")
 pico_set_program_version(Teste "0.1")

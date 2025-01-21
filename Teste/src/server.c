@@ -27,7 +27,7 @@ err_t http_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t er
     } else if (strstr(data, "GET /?led=off")) {
         gpio_put(RED_LED_PIN, 0);
     } else if (strstr(data, "GET /?music=play")) {
-        //playMusic();
+        playMusic();
     }
 
     tcp_write(tpcb, html_page, strlen(html_page), TCP_WRITE_FLAG_COPY);
