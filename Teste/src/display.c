@@ -16,4 +16,5 @@ void showText(const char *texto, uint32_t x, uint32_t y, uint32_t scale, bool cl
 
 void clearScreen(){
     ssd1306_clear(&display);
+    ssd1306_show(&display);
 }

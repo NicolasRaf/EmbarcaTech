@@ -59,4 +59,5 @@ void print_ip_address() {
     // Exibe o endereço IP no display OLED
     showText("IP address:", 0, 0, 1, true);
     showText(formatedIP, 0, 10, 1, false);
+    
 }

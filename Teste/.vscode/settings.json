@@ -54,6 +54,8 @@
     "server.h": "c",
     "timer.h": "c",
     "display.h": "c",
-    "i2c.h": "c"
+    "i2c.h": "c",
+    "ssd1306.h": "c",
+    "init.h": "c"
   }
 }
