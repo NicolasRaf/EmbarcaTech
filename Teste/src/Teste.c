@@ -2,6 +2,7 @@
 #include "pico/stdlib.h"
 #include "init.h"
 
+
 // Loop principal
 void main_loop() {
     cyw43_arch_poll();

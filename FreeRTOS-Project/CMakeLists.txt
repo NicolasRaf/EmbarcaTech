@@ -29,33 +29,31 @@ include(pico_sdk_import.cmake)
 
 include($ENV{FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 
-project(blink C CXX ASM)
+project(main C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
-add_executable(blink blink.c)
+add_executable(main main.c)
 
-pico_set_program_name(blink "blink")
-pico_set_program_version(blink "0.1")
+pico_set_program_name(main "main")
+pico_set_program_version(main "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(blink 1)
-pico_enable_stdio_usb(blink 1)
+pico_enable_stdio_uart(main 0)
+pico_enable_stdio_usb(main 1)
 
 # Add the standard include files to the build
-target_include_directories(blink PRIVATE 
+target_include_directories(main PRIVATE 
     ${CMAKE_CURRENT_LIST_DIR}
 )
 
 # Add any user requested libraries
-target_link_libraries(blink 
+target_link_libraries(main 
     pico_stdlib 
-    hardware_gpio 
-    pico_multicore 
     FreeRTOS-Kernel 
     FreeRTOS-Kernel-Heap4
 )
 
-pico_add_extra_outputs(blink)
+pico_add_extra_outputs(main)

@@ -67,8 +67,8 @@ target_compile_definitions(Teste PRIVATE
     PICO_LWIP_IPV4_ENABLED
     PICO_LWIP_TCP_ENABLED
     PICO_LWIP_UDP_ENABLED
-    RED_LED_PIN=${RED_LED_PIN}
-    GREEN_LED_PIN=${GREEN_LED_PIN}
+    export RED_LED_PIN=${RED_LED_PIN}
+    export GREEN_LED_PIN=${GREEN_LED_PIN}
 )
 
 pico_add_extra_outputs(Teste)
