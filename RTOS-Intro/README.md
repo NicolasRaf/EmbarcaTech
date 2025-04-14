@@ -1,35 +1,34 @@
-# Controle de LED com Botão utilizando FreeRTOS e Raspberry Pi Pico W
+# Projeto: RTOS Multicore com Raspberry Pi Pico W
 
-Este projeto utiliza FreeRTOS para gerenciar as tarefas de controle de um LED com um botão conectado ao Raspberry Pi Pico W. O sistema lê o estado do botão e acende um LED quando o botão é pressionado. O código demonstra a utilização de tarefas, filas e semáforos do FreeRTOS para controlar o comportamento do sistema.
+Este projeto demonstra o uso de **FreeRTOS** em um ambiente multicore com o **Raspberry Pi Pico W**, utilizando **semaphores**, **mutexes**, tarefas separadas por núcleo e controle de GPIOs com botões e LEDs.
 
-## Componentes Utilizados
+## Requisitos
 
-- **Raspberry Pi Pico W**: Microcontrolador responsável pelo controle do LED e do botão.
-- **LED**: Utilizado para indicar o estado do botão (aceso quando pressionado).
-- **Botão**: Componente de entrada para acionar o LED.
-- **FreeRTOS**: Sistema operacional de tempo real utilizado para gerenciar as tarefas.
+- Raspberry Pi Pico W
+- 2 LEDs
+- 2 botões
+- Jumpers e resistores (pull-down se preferir)
+- FreeRTOS Portado para Pico (Pico SDK com FreeRTOS)
+- Ambiente de desenvolvimento (CMake, toolchain para Raspberry Pi Pico)
 
-## Descrição do Funcionamento
+## Descrição
 
-O código consiste em três tarefas principais:
+O projeto utiliza dois núcleos do Pico W para executar tarefas distintas:
 
-1. **vTaskReadButton**: Lê o estado do botão a cada 100ms e envia o estado para uma fila.
-2. **vTaskProcessButton**: Processa o estado do botão. Se o botão for pressionado, a tarefa libera um semáforo para acender o LED. Caso contrário, o LED é desligado.
-3. **vTaskControlLED**: Controla o estado do LED. A tarefa aguarda pela liberação do semáforo e acende o LED quando o semáforo é liberado.
+- **Núcleo 0**:
+  - Monitora o **botão no pino 5**.
+  - Acende o **LED no pino 13** quando pressionado.
 
-## Funcionamento do Sistema
+- **Núcleo 1**:
+  - Monitora o **botão no pino 6**.
+  - Acende o **LED no pino 11** quando pressionado.
 
-1. **Leitura do Botão**: A tarefa `vTaskReadButton` monitora o estado do botão a cada 100ms. Quando o botão é pressionado, o estado é enviado para a fila.
-2. **Processamento do Estado do Botão**: A tarefa `vTaskProcessButton` verifica o estado do botão. Quando o botão é pressionado, a tarefa libera o semáforo para a tarefa `vTaskControlLED`, indicando que o LED deve ser aceso.
-3. **Controle do LED**: A tarefa `vTaskControlLED` aguarda a liberação do semáforo e, ao recebê-lo, acende o LED.
+As tarefas compartilham um recurso crítico simulado, controlado por **um mutex** e um **semáforo binário**. Um LED de debug no pino 25 pisca no início de cada tarefa para indicar que elas estão sendo executadas.
 
-## Dependências
+## Conceitos aplicados
 
-Este código utiliza a biblioteca **FreeRTOS** para gerenciar o sistema de tarefas, filas e semáforos. A biblioteca FreeRTOS é incluída no ambiente de desenvolvimento para o Raspberry Pi Pico W.
-
-Além disso, a biblioteca `pico/stdlib.h` é utilizada para controlar os pinos GPIO do Raspberry Pi Pico W.
-
-## Considerações
-
-- O código utiliza um pull-up interno no botão, ou seja, o botão deve ser conectado ao GPIO 5.
-- O LED está conectado ao GPIO 11 do Raspberry Pi Pico W e será aceso quando o botão for pressionado.
+- **FreeRTOS Tasks**: tarefas independentes que rodam em paralelo.
+- **Multicore**: tarefas rodando em núcleos distintos com `multicore_launch_core1`.
+- **Semaphore**: usado como sinalizador de acesso.
+- **Mutex**: garante acesso exclusivo ao recurso crítico (uso simbólico no exemplo).
+- **GPIO**: manipulação de pinos de entrada e saída no Pico W.
