@@ -6,6 +6,7 @@
 #include "hardware/adc.h"
 #include "html_response.h"
 #include "joystick.h"
+#include "ultrasonic.h"
 
 #include <string.h>
 #include <stdlib.h>

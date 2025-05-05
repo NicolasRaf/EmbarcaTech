@@ -1,16 +1,6 @@
 #include "ultrasonic.h"
 
-float averageDistance = 0;        
-bool measuring = false;            
-volatile bool startMeasurement = true;  
-float lastReadings[NUM_READINGS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-float slope = 0;
-int reading = 1;             
-int readingTimes[TIMES_DELAY] = {1, 30, 300, 600, 1800}; 
-int currenteTimeOption = 0; 
-int timeUntilNextRead = 1;     
-int readingCount = 0;  
-int readingIndex = 0;  
+float lastDistance;
 
 void initHcsr04() {
     gpio_init(TRIG_PIN);
@@ -57,52 +47,5 @@ float measureDistance() {
     // Converter o tempo em distância (velocidade do som = 343 m/s)
     float distance_cm = (duration * 0.0343) / 2;
     
-    return distance_cm;
-}
-
-void measurementControler() {
-    if (startMeasurement && !measuring) {
-        measuring = true;
-        printf("Iniciando a medição de distância...\n");
-
-        // Verifica se o sensor está ligado (reading == 1)
-        if (reading == 1) {
-            float newReading = measureDistance();
-
-            if (newReading > -1) {
-                // Armazena o novo valor no buffer circular
-                lastReadings[readingIndex] = newReading;
-                readingIndex = (readingIndex + 1) % NUM_READINGS;
-                if (readingCount < NUM_READINGS) {
-                    readingCount++;
-                }
-                // Calcula a média dos valores armazenados
-                float sum = 0;
-                for (int i = 0; i < readingCount; i++) {
-                    sum += lastReadings[i];
-                }
-                averageDistance = sum / readingCount;
-                printf("Nova medição: %.2f cm, média: %.2f cm\n", newReading, averageDistance);
-                calcGrowthRateMultiPoints();
-            } else {
-                printf("Erro na medição!\n");
-            }
-        } else {
-            printf("Sensor desligado, medição não efetuada.\n");
-        }
-        // Reseta as flags para a próxima medição
-        measuring = false;
-        startMeasurement = false;
-    }
-}
-
-void readingCounter() {
-    if (!measuring && reading) {
-        timeUntilNextRead--;
-        if (timeUntilNextRead < 0) {
-            timeUntilNextRead = readingTimes[currenteTimeOption];  // Reset do contador para 5 segundos
-            // Quando o tempo expira, seta a flag para iniciar a medição
-            startMeasurement = true;
-        }
-    }
+    lastDistance = distance_cm;
 }

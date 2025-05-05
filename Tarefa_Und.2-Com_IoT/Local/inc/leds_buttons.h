@@ -23,5 +23,6 @@ extern volatile int button2_state;
 void initGpioButtonLeds();
 void update_button_states();
 void handle_led_request(const char *request);
+void blinkWarn();
 
 #endif

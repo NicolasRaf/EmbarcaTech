@@ -9,9 +9,9 @@
 
 extern int x_value;
 extern int y_value;
-extern char directionWindRose[3];
+extern char directionWindRose[10];
 
 void read_joystick(void);
-void calculate_direction(void);
+static const char *calculate_direction(int x, int y);
 
 #endif

@@ -51,3 +51,10 @@ void handle_led_request(const char *request) {
         }
     }
 }
+
+void blinkWarn() {
+    static bool state = false;
+    gpio_put(LED_RED_PIN, state);
+    gpio_put(LED_GREEN_PIN, state);
+    state = !state;
+}

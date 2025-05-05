@@ -36,6 +36,7 @@ static err_t tcp_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, 
     // Atualiza leitura de sensores e botões
     read_joystick();
     update_button_states();
+    measureDistance();
 
     bool is_data = (strstr(request, "GET /data") != NULL);
     static char response_buffer[1024];
@@ -45,8 +46,8 @@ static err_t tcp_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, 
         // Monta corpo JSON
         char json_body[256];
         int json_len = snprintf(json_body, sizeof(json_body),
-            "{\"x\":%d,\"y\":%d,\"direction\":\"%s\",\"button1\":%d,\"button2\":%d}",
-            x_value, y_value, directionWindRose, button1_state, button2_state);
+            "{\"x\":%d,\"y\":%d,\"direction\":\"%s\",\"button1\":%d,\"button2\":%d,\"ultra\":%f}",
+            x_value, y_value, directionWindRose, button1_state, button2_state, lastDistance);
 
         // Monta header
         int header_len = snprintf(response_buffer, sizeof(response_buffer),
