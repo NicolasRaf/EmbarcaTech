@@ -3,6 +3,8 @@
 
 int main() {
     initializeSystem();
+
+    sleep_ms(200);
     connectWifi();
 
     start_server();  // função definida em server.c

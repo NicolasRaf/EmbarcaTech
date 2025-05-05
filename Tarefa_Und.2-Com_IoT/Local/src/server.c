@@ -1,98 +1,87 @@
 #include "server.h"
 
-char directionWindRose[3] = "C";
-int x_value = 0;
-int y_value = 0;
-
-void calculate_direction() {
-    if (x_value > 3000 && y_value > 3000) strcpy(directionWindRose, "NE");
-    else if (x_value > 3000 && y_value < 1000) strcpy(directionWindRose, "SE");
-    else if (x_value < 1000 && y_value > 3000) strcpy(directionWindRose, "NW");
-    else if (x_value < 1000 && y_value < 1000) strcpy(directionWindRose, "SW");
-    else if (x_value > 3000) strcpy(directionWindRose, "E");
-    else if (x_value < 1000) strcpy(directionWindRose, "W");
-    else if (y_value > 3000) strcpy(directionWindRose, "N");
-    else if (y_value < 1000) strcpy(directionWindRose, "S");
-    else strcpy(directionWindRose, "C");
-}
-
-void read_joystick() {
-    adc_select_input(0); // ADC0 - GPIO26
-    x_value = adc_read();
-    adc_select_input(1); // ADC1 - GPIO27
-    y_value = adc_read();
-    calculate_direction();
-}
-
-err_t on_sent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
+// Callback chamado quando os dados foram enviados (fecha a conexão)
+static err_t on_sent(void *arg, struct tcp_pcb *tpcb, u16_t len) {
     tcp_close(tpcb);
     return ERR_OK;
 }
 
-err_t tcp_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
+// Callback principal de recepção
+static err_t tcp_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
     if (!p) {
         tcp_close(tpcb);
         return ERR_OK;
     }
 
-    char *req = p->payload;
-    printf("%s", req);
+    // Copia a requisição para string terminada em '\0'
+    char *request = malloc(p->tot_len + 1);
+    if (!request) {
+        pbuf_free(p);
+        return ERR_MEM;
+    }
+    memcpy(request, p->payload, p->tot_len);
+    request[p->tot_len] = '\0';
 
+    {
+        // extrai a primeira linha até '\r' para não poluir o log
+        char line[128] = {0};
+        sscanf(request, "%127[^\r\n]", line);
+        printf("[HTTP REQ] %s\n", line);
+    }
+
+    // Marca bytes recebidos e libera o pbuf
+    tcp_recved(tpcb, p->tot_len);
+    pbuf_free(p);
+
+    // Atualiza leitura de sensores e botões
     read_joystick();
     update_button_states();
 
+    bool is_data = (strstr(request, "GET /data") != NULL);
+    static char response_buffer[1024];
     err_t wr_err;
 
-    if (strstr(req, "GET /data") != NULL && strstr(req, "HTTP/") != NULL) {
-        // Envia os dados JSON
-        char json[256];
-        snprintf(json, sizeof(json),
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: application/json\r\n"
-            "Connection: close\r\n"
-            "\r\n"
-            "{\"x\": %d, \"y\": %d, \"direction\": \"%s\", \"button1\": %d, \"button2\": %d}",
+    if (is_data) {
+        // Monta corpo JSON
+        char json_body[256];
+        int json_len = snprintf(json_body, sizeof(json_body),
+            "{\"x\":%d,\"y\":%d,\"direction\":\"%s\",\"button1\":%d,\"button2\":%d}",
             x_value, y_value, directionWindRose, button1_state, button2_state);
 
-        tcp_sent(tpcb, on_sent);
-        wr_err = tcp_write(tpcb, json, strlen(json), TCP_WRITE_FLAG_COPY);
-        if (wr_err != ERR_OK) printf("Erro ao enviar JSON: %d\n", wr_err);
-        tcp_output(tpcb);
-    } else {
-        // Para qualquer outra rota, envia o HTML
-        char response[512];
-        snprintf(response, sizeof(response),
+        // Monta header
+        int header_len = snprintf(response_buffer, sizeof(response_buffer),
             "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/html\r\n"
+            "Content-Type: application/json\r\n"
             "Content-Length: %d\r\n"
+            "Connection: close\r\n"
             "\r\n",
-            strlen(html_response));
+            json_len);
 
-        // Envia o cabeçalho
+        // Concatena e envia
+        memcpy(response_buffer + header_len, json_body, json_len);
         tcp_sent(tpcb, on_sent);
-        wr_err = tcp_write(tpcb, response, strlen(response), TCP_WRITE_FLAG_COPY);
-        if (wr_err != ERR_OK) {
-            printf("Erro ao enviar cabeçalho: %d\n", wr_err);
-        }
-        // Envia o conteúdo HTML
-        wr_err = tcp_write(tpcb, html_response, strlen(html_response), TCP_WRITE_FLAG_COPY);
-        if (wr_err != ERR_OK) {
-            printf("Erro ao enviar HTML: %d\n", wr_err);
-        }
-        tcp_output(tpcb);
+        wr_err = tcp_write(tpcb, response_buffer, header_len + json_len, TCP_WRITE_FLAG_COPY);
+        if (wr_err != ERR_OK) printf("Erro ao enviar JSON: %d\n", wr_err);
+    } else {
+        // Envia o HTML estático de html_response.h
+        int total_len = strlen(html_response);
+        tcp_sent(tpcb, on_sent);
+        wr_err = tcp_write(tpcb, html_response, total_len, TCP_WRITE_FLAG_COPY);
+        if (wr_err != ERR_OK) printf("Erro ao enviar HTML: %d\n", wr_err);
     }
 
-    pbuf_free(p);
+    tcp_output(tpcb);
+    free(request);
     return ERR_OK;
 }
 
-
-
-err_t on_http_accept(void *arg, struct tcp_pcb *newpcb, err_t err) {
+// Aceita nova conexão e registra callback de recepção
+static err_t on_http_accept(void *arg, struct tcp_pcb *newpcb, err_t err) {
     tcp_recv(newpcb, tcp_recv_callback);
     return ERR_OK;
 }
 
+// Inicializa e inicia o servidor na porta definida
 void start_server() {
     struct tcp_pcb *pcb = tcp_new();
     if (!pcb) {
@@ -100,9 +89,9 @@ void start_server() {
         return;
     }
 
-    err_t err = tcp_bind(pcb, IP_ADDR_ANY, PORT);
-    if (err != ERR_OK) {
-        printf("Bind error: %d\n", err);
+    err_t bind_err = tcp_bind(pcb, IP_ADDR_ANY, PORT);
+    if (bind_err != ERR_OK) {
+        printf("Bind error: %d\n", bind_err);
         return;
     }
 
@@ -113,7 +102,5 @@ void start_server() {
     }
 
     tcp_accept(pcb, on_http_accept);
-
     printf("Server started on port %d\n", PORT);
 }
-

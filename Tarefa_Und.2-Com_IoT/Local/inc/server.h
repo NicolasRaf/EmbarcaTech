@@ -5,7 +5,7 @@
 #include "leds_buttons.h"
 #include "hardware/adc.h"
 #include "html_response.h"
-#include "analogic.h"
+#include "joystick.h"
 
 #include <string.h>
 #include <stdlib.h>

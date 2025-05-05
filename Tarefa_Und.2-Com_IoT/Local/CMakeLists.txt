@@ -66,13 +66,12 @@ set(WIFI_SSID $ENV{WIFI_SSID})
 set(WIFI_PASSWORD $ENV{WIFI_PASSWORD})
 
 target_compile_definitions(main PRIVATE
-    WIFI_SSID="${WIFI_SSID}"
-    WIFI_PASSWORD="${WIFI_PASSWORD}"
+    WIFI_SSID="NRaf"
+    WIFI_PASSWORD="Eucarionte13"
 )
 
 # Add any user requested libraries
-target_link_libraries(main 
-        
+target_link_libraries(main    
     )
 
 pico_add_extra_outputs(main)
