@@ -49,6 +49,7 @@ pico_enable_stdio_usb(main 1)
 target_link_libraries(main
     pico_stdlib
     hardware_adc
+    hardware_pwm
     pico_cyw43_arch_lwip_threadsafe_background
 )
 

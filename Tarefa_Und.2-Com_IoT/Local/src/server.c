@@ -46,8 +46,9 @@ static err_t tcp_recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, 
         // Monta corpo JSON
         char json_body[256];
         int json_len = snprintf(json_body, sizeof(json_body),
-            "{\"x\":%d,\"y\":%d,\"direction\":\"%s\",\"button1\":%d,\"button2\":%d,\"ultra\":%f}",
-            x_value, y_value, directionWindRose, button1_state, button2_state, lastDistance);
+        "{\"x\":%d,\"y\":%d,\"dir\":\"%s\",\"b1\":\"%s\",\"b2\":\"%s\",\"ultra\":%.1f}",
+        x_value, y_value, directionWindRose, button1_state, button2_state, lastDistance);
+    
 
         // Monta header
         int header_len = snprintf(response_buffer, sizeof(response_buffer),

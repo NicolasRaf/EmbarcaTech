@@ -16,13 +16,12 @@
 
 // Variáveis compartilhadas
 extern struct tcp_pcb *current_client;
-extern volatile int button1_state;
-extern volatile int button2_state;
+extern char button1_state[12];
+extern char button2_state[12];
 
 // Protótipos de funções
 void initGpioButtonLeds();
 void update_button_states();
-void handle_led_request(const char *request);
 void blinkWarn();
 
 #endif
