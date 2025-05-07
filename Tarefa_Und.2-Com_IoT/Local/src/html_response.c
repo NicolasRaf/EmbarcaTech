@@ -14,7 +14,7 @@ const char *html_response =
   "Dir: <span id='dir'>?</span><br>"
   "B1: <span id='b1'>?</span><br>"
   "B2: <span id='b2'>?</span><br>"
-  "Ultrassom: <span id='u'>?</span> cm"
+  "Ultrassônico: <span id='u'>?</span> cm"
   "</p>"
   "</div>"
   "</div>"

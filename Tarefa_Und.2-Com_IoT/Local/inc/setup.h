@@ -16,6 +16,7 @@
 #include "wifi_manager.h"
 #include "ultrasonic.h"
 #include "leds_buttons.h"
+#include "joystick.h"
 
 // Includes do lwIP
 #include "lwip/pbuf.h"
