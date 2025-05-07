@@ -23,5 +23,6 @@ extern char button2_state[12];
 void initGpioButtonLeds();
 void update_button_states();
 void blinkWarn();
+void turnOffLeds();
 
 #endif

@@ -34,4 +34,10 @@ void blinkWarn() {
     state = !state;
 }
 
+void turnOffLeds() {
+    gpio_put(LED_BLUE_PIN, 0);
+    gpio_put(LED_RED_PIN, 0);
+    gpio_put(LED_GREEN_PIN, 0);
+}
+
 

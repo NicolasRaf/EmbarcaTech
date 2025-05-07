@@ -3,6 +3,7 @@
 
 // Configuração mínima para lwIP
 #define NO_SYS 1
+
 #define LWIP_SOCKET 0
 #define LWIP_NETCONN 0
 #define LWIP_TCP 1
@@ -27,6 +28,6 @@
 #define HTTPD_USE_CUSTOM_FSDATA 0
 #define LWIP_HTTPD_CGI 0           // Desative CGI para economizar memória
 #define LWIP_NETIF_HOSTNAME 1
-
+#define TCP_SND_QUEUELEN 12
 
 #endif /* LWIPOPTS_H */

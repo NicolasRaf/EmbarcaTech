@@ -7,8 +7,9 @@ void initializeSystem() {
     initWifi();
     initGpioButtonLeds();
     initHcsr04();
+    initInterrupts();
 }
 
 void initInterrupts() {
-    gpio_set_irq_enabled_with_callback(BUTTON_A_PIN, GPIO_IRQ_EDGE_FALL, resetConnection, NULL);
+    gpio_set_irq_enabled_with_callback(BUTTON_A_PIN, GPIO_IRQ_EDGE_RISE, true, resetConnection);
 }

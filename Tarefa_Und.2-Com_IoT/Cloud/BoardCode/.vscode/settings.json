@@ -53,6 +53,9 @@
         "adc.h": "c",
         "gpio.h": "c",
         "cyw43_arch.h": "c",
-        "joystick.h": "c"
+        "joystick.h": "c",
+        "sys.h": "c",
+        "tcp.h": "c",
+        "timeouts.h": "c"
     }
 }
