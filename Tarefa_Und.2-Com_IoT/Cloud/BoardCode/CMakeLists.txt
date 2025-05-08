@@ -68,8 +68,8 @@ set(WIFI_SSID $ENV{WIFI_SSID})
 set(WIFI_PASSWORD $ENV{WIFI_PASSWORD})
 
 target_compile_definitions(main PRIVATE
-    WIFI_SSID="NOTEZIN_1916"
-    WIFI_PASSWORD="12345678"
+    WIFI_SSID="${WIFI_SSID}"
+    WIFI_PASSWORD="${WIFI_PASSWORD}"
 )
 
 # Add any user requested libraries

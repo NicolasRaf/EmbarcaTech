@@ -14,7 +14,6 @@
     #define WIFI_PASSWORD "PASSWORD"
 #endif
 
-extern char formatedIP[]; // Buffer para armazenar o IP formatado como string
 
 // Inicializa o Wi-Fi
 int initWifi();

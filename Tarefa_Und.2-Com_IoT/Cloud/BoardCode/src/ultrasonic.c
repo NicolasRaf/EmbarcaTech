@@ -1,6 +1,13 @@
 #include "ultrasonic.h"
 
-float lastDistance;
+float lastDistance; // Buffer para armazenar os últimos valores lidos
+
+/**
+ * Inicializa o sensor ultrassônico HC-SR04.
+ *
+ * Configura o pino TRIG como saída e o pino ECHO como entrada.
+ * O pino TRIG é inicializado em estado baixo, mantendo o sensor desligado.
+ */
 
 void initHcsr04() {
     gpio_init(TRIG_PIN);
@@ -13,6 +20,15 @@ void initHcsr04() {
     gpio_set_dir(ECHO_PIN, GPIO_IN);
 }
 
+/**
+ * Mede a distância em centímetros usando o sensor ultrassônico HC-SR04.
+ *
+ * Envia um pulso de 10 microsegundos no pino TRIG, e espera o pino ECHO
+ * subir e descer. Calcula a distância em centímetros com base na duração
+ * do pulso.
+ *
+ * @return Distância em centímetros, ou -1.0 se a leitura falhar.
+ */
 float measureDistance() {
     const uint64_t timeout_us = 38000; // ~38ms timeout (aprox. 6.5 metros, considerando o tempo de ida e volta do som)
 
