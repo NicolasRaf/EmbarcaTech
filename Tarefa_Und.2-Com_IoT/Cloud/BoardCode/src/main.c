@@ -37,6 +37,7 @@ int main() {
     connectWifi();
 
     // Estabelece uma conex o TCP com o servidor
+    sleep_ms(1000);  // Aguarda 1 segundos antes de tentar conexão
     create_tcp_connection();
 
     // Loop infinito que atualiza os valores dos sensores e botões e

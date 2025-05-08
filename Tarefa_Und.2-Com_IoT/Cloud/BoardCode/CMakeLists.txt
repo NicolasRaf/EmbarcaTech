@@ -66,10 +66,16 @@ target_include_directories(main PRIVATE
 
 set(WIFI_SSID $ENV{WIFI_SSID})
 set(WIFI_PASSWORD $ENV{WIFI_PASSWORD})
+set(PROXY_HOST $ENV{RAILWAY_PROXY_HOST})
+set(PROXY_PORT $ENV{RAILWAY_PROXY_PORT})
+
+
 
 target_compile_definitions(main PRIVATE
     WIFI_SSID="${WIFI_SSID}"
     WIFI_PASSWORD="${WIFI_PASSWORD}"
+    PROXY_HOST="${PROXY_HOST}"
+    PROXY_PORT=${PROXY_PORT}
 )
 
 # Add any user requested libraries

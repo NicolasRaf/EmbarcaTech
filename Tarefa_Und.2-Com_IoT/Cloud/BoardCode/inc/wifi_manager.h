@@ -14,6 +14,7 @@
     #define WIFI_PASSWORD "PASSWORD"
 #endif
 
+extern bool wifiConnected;
 
 // Inicializa o Wi-Fi
 int initWifi();
@@ -21,7 +22,5 @@ int initWifi();
 // Conecta ao Wi-Fi
 int connectWifi();
 
-// Imprime o endereço IP
-void printIpAddress();
 
 #endif // WIFI_MANAGER_H

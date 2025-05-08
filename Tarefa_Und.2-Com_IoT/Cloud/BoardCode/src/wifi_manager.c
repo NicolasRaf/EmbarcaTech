@@ -1,5 +1,7 @@
 #include "wifi_manager.h"
 
+bool wifiConnected = false;
+
 /**
  * Inicializa o Wi-Fi.
  *
@@ -49,6 +51,7 @@ int connectWifi() {
         // Verifica o status do link
         int status = cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA);
         if (status == CYW43_LINK_UP) {
+            wifiConnected = true;
             printf("Connected to Wi-Fi.\n");
             gpio_put(LED_RED_PIN, 0);   // Apaga LED vermelho
             gpio_put(LED_GREEN_PIN, 1); // Acende LED verde

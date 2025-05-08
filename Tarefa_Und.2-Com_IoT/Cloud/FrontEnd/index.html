@@ -14,7 +14,7 @@
 
   <script>
     const dataDiv = document.getElementById('data');
-    const socket = new WebSocket('ws://localhost:3000');
+    const socket = new WebSocket('wss://iotserver-embarcatech-production.up.railway.app');
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
