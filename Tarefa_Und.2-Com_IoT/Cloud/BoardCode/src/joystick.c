@@ -8,8 +8,8 @@ void initJoystick() {
 }
 
 char joystickDirection[10] = "Centro"; // Direção do joystick
-int axisX = 0;
 int axisY = 0;
+int axisX = 0;
 
 // tabela: primeiro índice é eixo Y (-1=S,0=C,1=N), segundo é X (-1=W,0=C,1=E)
 static const char * const dirMap[3][3] = {
@@ -47,7 +47,7 @@ static const char *calculateDirection(int x, int y) {
 }
 
 /**
- * Lê o joystick (ADC 0 = X, ADC 1 = Y) e atualiza globals axisX, axisY
+ * Lê o joystick (ADC 0 = X, ADC 1 = Y) e atualiza globals axisY, axisX
  * e joystickDirection.
  */
 void readJoystick(void) {
@@ -56,7 +56,7 @@ void readJoystick(void) {
     adc_select_input(1);
     axisY = adc_read();
 
-    const char *d = calculateDirection(axisX, axisY);
+    const char *d = calculateDirection(axisY, axisX);
     // cópia segura para o buffer global
     strncpy(joystickDirection, d, sizeof(joystickDirection)-1);
     joystickDirection[sizeof(joystickDirection)-1] = '\0';

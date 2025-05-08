@@ -8,7 +8,7 @@
 #include "hardware/adc.h"
 
 extern int axisY;
-extern int axisY;
+extern int axisX;
 extern char joystickDirection[10];
 
 // limites do ADC

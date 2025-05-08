@@ -210,7 +210,7 @@ void send_data_to_server(void) {
         "{\"eixo_x\":%d,\"eixo_y\":%d,"  
         "\"direcao\":\"%s\",\"botao_1\":\"%s\",\"botao_2\":\"%s\","  
         "\"hc-sr04\":%.2f}",
-        axisY, axisY, joystickDirection,
+        axisY, axisX, joystickDirection,
         buttonAState, buttonBState, lastDistance
     );
 
