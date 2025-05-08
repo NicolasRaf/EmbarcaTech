@@ -252,7 +252,9 @@ void close_tcp_connection(void) {
  * Fecha a conexão TCP, reseta as variáveis globais e
  * tenta reconectar ao servidor.
  */
-void resetConnection(void) {
+void resetConnection(void) {   
+    if (haveConnection || pcb) return;
+
     printf("Resetando conexão...\n");
     blinkWarn();
     
