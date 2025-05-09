@@ -5,6 +5,8 @@ static bool haveConnection = false;
 static int retries = 0;
 static volatile bool can_send = false;
 
+// ------------------ Callbacks ------------------
+
 // Recebimento de dados
 err_t tcp_client_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err) {
     if (p == NULL) {
@@ -38,34 +40,72 @@ void tcp_client_error(void *arg, err_t err) {
     if (retries < MAX_RETRIES) create_tcp_connection();
 }
 
-// Conexão estabelecida
+// Conexão estabelecida (handshake completo)
 err_t tcp_client_connected(void *arg, struct tcp_pcb *tpcb, err_t err) {
     LWIP_UNUSED_ARG(arg);
     if (err != ERR_OK) return err;
     printf("Conectado ao proxy!\n");
     pcb = tpcb;
     haveConnection = true;
-    can_send = true;
+    can_send = true;                     // ◀️ inicializa o primeiro envio
     tcp_err(pcb, tcp_client_error);
     tcp_recv(pcb, tcp_client_recv);
     tcp_sent(pcb, tcp_client_sent);
     return ERR_OK;
 }
 
-// ------------------ TCP Write with queue check ------------------
+// ------------------ DNS Callback ------------------
+
+void dns_proxy_callback(const char *name, const ip_addr_t *ip, void *arg) {
+    if (ip == NULL) {
+        printf("Falha ao resolver DNS: %s\n", name);
+        return;
+    }
+
+    pcb = tcp_new();
+    if (!pcb) {
+        printf("Erro ao criar PCB após DNS\n");
+        return;
+    }
+    can_send = true;                     // ◀️ inicializa o primeiro envio
+
+    tcp_arg(pcb, NULL);
+    tcp_err(pcb, tcp_client_error);
+    tcp_recv(pcb, tcp_client_recv);
+    tcp_sent(pcb, tcp_client_sent);
+
+    // ◀️ passa sempre o callback de conexão
+    err_t ret = tcp_connect(pcb, ip, PROXY_PORT, tcp_client_connected);
+    if (ret != ERR_OK) {
+        printf("Erro tcp_connect após DNS (%d)\n", ret);
+        tcp_abort(pcb);
+        pcb = NULL;
+    }
+}
+
+// ------------------ TCP Write com checagem ------------------
+
 static void do_tcp_write(const char *data, size_t len) {
+    // ◀️ protege contra envios sem conexão
+    if (!pcb || !haveConnection) {
+        printf("Cannot send: no active connection\n");
+        return;
+    }
+
     size_t sent = 0;
     while (sent < len) {
         uint16_t mss   = tcp_mss(pcb);
         size_t   chunk = LWIP_MIN(mss, len - sent);
+
         // espera ACK e espaço em bytes
         while (!can_send || tcp_sndbuf(pcb) < chunk) {
             sys_msleep(1);
         }
         can_send = false;
+
         if (tcp_write(pcb, data + sent, chunk, TCP_WRITE_FLAG_COPY) != ERR_OK ||
             tcp_output(pcb) != ERR_OK) {
-            // aborta no erro
+            printf("Erro ao enviar dados. Abortando conexão.\n");
             tcp_abort(pcb);
             pcb = NULL;
             haveConnection = false;
@@ -75,36 +115,21 @@ static void do_tcp_write(const char *data, size_t len) {
     }
 }
 
-
 // ------------------ Connection Management ------------------
 
-void dns_proxy_callback(const char *name, const ip_addr_t *ip, void *arg) {
-    if (ip == NULL) {
-        printf("Falha ao resolver DNS: %s\n", name);
-        return;
-    }
-
-
-    pcb = tcp_new();
-    tcp_arg(pcb, NULL);
-    tcp_err(pcb, tcp_client_error);
-    tcp_recv(pcb, tcp_client_recv);
-    tcp_sent(pcb, tcp_client_sent);
-    tcp_connect(pcb, ip, PROXY_PORT, tcp_client_connected);
-}
-
 void create_tcp_connection(void) {
+    if (pcb) return;
+    retries++;
+
     ip_addr_t ip;
-    err_t err = dns_gethostbyname(PROXY_HOST, &ip,
-                                  dns_proxy_callback, NULL);
+    err_t err = dns_gethostbyname(PROXY_HOST, &ip, dns_proxy_callback, NULL);
     if (err == ERR_OK) {
-        // cache: conectar imediatamente
+        // cache válido: conecta imediatamente
         dns_proxy_callback(PROXY_HOST, &ip, NULL);
     } else if (err != ERR_INPROGRESS) {
         printf("dns_gethostbyname falhou (%d)\n", err);
     }
 }
-
 
 void close_tcp_connection(void) {
     if (pcb) {
@@ -131,21 +156,27 @@ void send_data_to_server(void) {
         }
         return;
     }
+
     // Monta JSON
     char json[512];
     int jlen = snprintf(json, sizeof(json),
         "{\"eixo_x\":%d,\"eixo_y\":%d,\"direcao\":\"%s\","
         "\"botao_1\":\"%s\",\"botao_2\":\"%s\",\"hc-sr04\":%.2f}",
-        axisX, axisY, joystickDirection, buttonAState, buttonBState, lastDistance);
+        axisX, axisY, joystickDirection,
+        buttonAState, buttonBState,
+        lastDistance);
+
     // Monta POST
     char req[600];
     int rlen = snprintf(req, sizeof(req),
         "POST /update HTTP/1.1\r\n"
-        "Host: vigia_das_aguas-server.railway.internal\r\n"
+        "Host: %s\r\n"
         "Content-Type: application/json\r\n"
         "Content-Length: %d\r\n"
-        "Connection: close\r\n\r\n%s",
-        jlen, json);
+        "Connection: close\r\n\r\n"
+        "%s",
+        PROXY_HOST, jlen, json);
+
     do_tcp_write(req, rlen);
     retries = 0;
 }

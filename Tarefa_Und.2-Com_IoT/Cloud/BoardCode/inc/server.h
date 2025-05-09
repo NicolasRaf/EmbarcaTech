@@ -18,14 +18,14 @@
 #include "wifi_manager.h"
 
 #define MAX_RETRIES 5
-#define SEND_INTERVAL_MS 500
+#define SEND_INTERVAL_MS 1000
 
 #ifndef PROXY_PORT
-    #define PROXY_PORT 53194
+    #define PROXY_PORT 11111
 #endif
 
 #ifndef PROXY_HOST
-    #define PROXY_HOST "shinkansen.proxy.rlwy.net"
+    #define PROXY_HOST ""
 #endif
 
 static bool haveConnection;
