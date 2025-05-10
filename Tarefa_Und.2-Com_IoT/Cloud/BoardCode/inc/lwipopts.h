@@ -14,7 +14,6 @@
 #define PBUF_POOL_SIZE 16               // Ajuste conforme necessário
 #define MEMP_NUM_UDP_PCB 4
 #define MEMP_NUM_TCP_PCB 4
-#define MEMP_NUM_TCP_SEG 16
 #define LWIP_IPV4 1
 #define LWIP_ICMP 1
 #define LWIP_RAW 1
@@ -28,6 +27,8 @@
 #define HTTPD_USE_CUSTOM_FSDATA 0
 #define LWIP_HTTPD_CGI 0           // Desative CGI para economizar memória
 #define LWIP_NETIF_HOSTNAME 1
-#define TCP_SND_QUEUELEN 12
+#define TCP_SND_QUEUELEN  32
+#define PBUF_POOL_SIZE    32
+#define MEMP_NUM_TCP_SEG        32
 
 #endif /* LWIPOPTS_H */

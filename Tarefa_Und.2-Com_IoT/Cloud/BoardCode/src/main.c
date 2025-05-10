@@ -46,7 +46,7 @@ int main() {
         updateValues(); // Atualiza os valores dos sensores e botões
         send_data_to_server(); // Envia os dados ao servidor
 
-        sleep_ms(500);
+        sleep_ms(1000);
     }
 
     // Nunca alcan ada, pois o loop   infinito
