@@ -43,7 +43,7 @@ static inline int AxisIndex(int v) {
 static const char *calculateDirection(int x, int y) {
     int ix = AxisIndex(x) + 1;
     int iy = AxisIndex(y) + 1;
-    return dirMap[iy][ix];
+    return dirMap[ix][iy];
 }
 
 /**
@@ -56,7 +56,7 @@ void readJoystick(void) {
     adc_select_input(1);
     axisY = adc_read();
 
-    const char *d = calculateDirection(axisY, axisX);
+    const char *d = calculateDirection(axisX, axisY);
     // cópia segura para o buffer global
     strncpy(joystickDirection, d, sizeof(joystickDirection)-1);
     joystickDirection[sizeof(joystickDirection)-1] = '\0';

@@ -18,7 +18,7 @@
 #include "wifi_manager.h"
 
 #define MAX_RETRIES 5
-#define SEND_INTERVAL_MS 1000
+#define SEND_INTERVAL_MS 100
 
 #ifndef PROXY_PORT
     #define PROXY_PORT 11111
