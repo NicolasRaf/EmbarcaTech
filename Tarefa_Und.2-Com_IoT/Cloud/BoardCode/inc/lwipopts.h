@@ -11,7 +11,7 @@
 #define MEM_ALIGNMENT 4
 #define MEM_SIZE 4096
 #define MEMP_NUM_PBUF 16
-#define PBUF_POOL_SIZE 16               // Ajuste conforme necessário
+#define PBUF_POOL_SIZE 64  // Ajuste conforme necessário
 #define MEMP_NUM_UDP_PCB 4
 #define MEMP_NUM_TCP_PCB 4
 #define LWIP_IPV4 1
@@ -20,15 +20,20 @@
 #define LWIP_DHCP 1
 #define LWIP_AUTOIP 1
 #define LWIP_DNS 1
+
+// Configuração do servidor HTTP
 #define LWIP_HTTPD 1
-#define LWIP_HTTPD_SSI              1  // Habilita SSI
-#define LWIP_HTTPD_SUPPORT_POST     1  // Habilita suporte a POST, se necessário
+#define LWIP_HTTPD_SSI 1  // Habilita SSI
+#define LWIP_HTTPD_SUPPORT_POST 1  // Habilita suporte a POST, se necessário
 #define LWIP_HTTPD_DYNAMIC_HEADERS 1
 #define HTTPD_USE_CUSTOM_FSDATA 0
-#define LWIP_HTTPD_CGI 0           // Desative CGI para economizar memória
+#define LWIP_HTTPD_CGI 0  // Desative CGI para economizar memória
+
+// Configurações de rede
 #define LWIP_NETIF_HOSTNAME 1
-#define TCP_SND_QUEUELEN  32
-#define PBUF_POOL_SIZE    32
-#define MEMP_NUM_TCP_SEG        32
+
+// Configurações do TCP
+#define TCP_SND_QUEUELEN 64  // Aumente conforme necessário
+#define MEMP_NUM_TCP_SEG 64
 
 #endif /* LWIPOPTS_H */

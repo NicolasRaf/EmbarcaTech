@@ -2,8 +2,10 @@
 #define SERVER_H
 
 // Includes do C
+#include <stdlib.h>
 #include <string.h>
 #include "pico/stdlib.h"
+#include "pico/time.h" // para get_absolute_time() e absolute_time_diff_us()
 
 // Includes do lwIP
 #include "lwip/sys.h"
@@ -18,7 +20,7 @@
 #include "wifi_manager.h"
 
 #define MAX_RETRIES 5
-#define SEND_INTERVAL_MS 1000
+#define SEND_INTERVAL_MS 500
 
 #ifndef PROXY_PORT
     #define PROXY_PORT 11111

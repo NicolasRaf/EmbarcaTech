@@ -1,4 +1,5 @@
 #include "setup.h"
+#include "hardware/watchdog.h"
 
 /**
  * Atualiza os valores globais do sistema.
@@ -40,15 +41,18 @@ int main() {
     sleep_ms(1000);  // Aguarda 1 segundos antes de tentar conexão
     create_tcp_connection();
 
+
+    watchdog_enable(5000, true);
     // Loop infinito que atualiza os valores dos sensores e botões e
     // envia os dados ao servidor
-    while (true) {
+    while (wifiConnected) {
         updateValues(); // Atualiza os valores dos sensores e botões
         send_data_to_server(); // Envia os dados ao servidor
 
-        sleep_ms(1000);
-    }
+        // Atualiza o watchdog
+        watchdog_update();
 
-    // Nunca alcan ada, pois o loop   infinito
+        sleep_ms(500);
+    }
     return 0;
 }

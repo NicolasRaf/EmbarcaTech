@@ -43,7 +43,6 @@ float measureDistance() {
     absolute_time_t deadline = make_timeout_time_us(timeout_us);
     while (gpio_get(ECHO_PIN) == 0) {
         if (get_absolute_time() > deadline) {
-            printf("Timeout esperando ECHO subir\n");
             return -1.0;
         }
     }
@@ -53,7 +52,6 @@ float measureDistance() {
     deadline = make_timeout_time_us(timeout_us);
     while (gpio_get(ECHO_PIN) == 1) {
         if (get_absolute_time() > deadline) {
-            printf("Timeout esperando ECHO descer\n");
             return -1.0;
         }
     }
