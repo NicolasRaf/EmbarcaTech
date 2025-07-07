@@ -1,4 +1,5 @@
 # Generated Cmake Pico project file
+
 cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_C_STANDARD 11)
@@ -14,9 +15,9 @@ if(WIN32)
 else()
     set(USERHOME $ENV{HOME})
 endif()
-set(sdkVersion 1.5.1)
+set(sdkVersion 2.1.1)
 set(toolchainVersion 14_2_Rel1)
-set(picotoolVersion 1.5.1)
+set(picotoolVersion 2.1.1)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
@@ -27,35 +28,44 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-include($ENV{FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
-
-project(blink C CXX ASM)
+project(LumSensor C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
-add_executable(blink blink.c)
+file(GLOB SRC_FILES "src/*.c")
 
-pico_set_program_name(blink "blink")
-pico_set_program_version(blink "0.1")
+add_executable(LumSensor ${SRC_FILES})
+
+pico_set_program_name(LumSensor "LumSensor")
+pico_set_program_version(LumSensor "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(blink 1)
-pico_enable_stdio_usb(blink 1)
+pico_enable_stdio_uart(LumSensor 0)
+pico_enable_stdio_usb(LumSensor 1)
+
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/lib/pico-ssd1306")
+
+
+# Add the standard library to the build
+target_link_libraries(LumSensor
+    pico_stdlib
+    pico-ssd1306
+    hardware_i2c
+)
 
 # Add the standard include files to the build
-target_include_directories(blink PRIVATE 
+target_include_directories(LumSensor PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/lib/pico-ssd1306
+    ${CMAKE_CURRENT_LIST_DIR}/inc
 )
 
 # Add any user requested libraries
-target_link_libraries(blink 
-    pico_stdlib 
-    hardware_gpio 
-    pico_multicore 
-    FreeRTOS-Kernel 
-    FreeRTOS-Kernel-Heap4
+target_link_libraries(LumSensor 
+        
 )
 
-pico_add_extra_outputs(blink)
+pico_add_extra_outputs(LumSensor)
+

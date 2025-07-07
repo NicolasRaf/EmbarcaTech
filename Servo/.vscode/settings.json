@@ -1,4 +1,5 @@
 {
+    "cmake.showSystemKits": false,
     "cmake.options.statusBarVisibility": "hidden",
     "cmake.options.advanced": {
         "build": {
@@ -38,12 +39,17 @@
     "raspberry-pi-pico.ninjaPath": "${HOME}/.pico-sdk/ninja/v1.12.1/ninja",
     "files.associations": {
         "*.embeddedhtml": "html",
-        "diff": "diff",
-        "rp2040_config.h": "c",
-        "queue.h": "c",
-        "freertos.h": "c",
+        "init.h": "c",
+        "stdlib.h": "c",
+        "bh1750.h": "c",
+        "display.h": "c",
         "stdio.h": "c",
-        "semphr.h": "c",
-        "task.h": "c"
+        "i2c.h": "c",
+        "string.h": "c",
+        "servor.h": "c",
+        "servo.h": "c",
+        "pwm.h": "c",
+        "clocks.h": "c",
+        "gpio.h": "c"
     }
 }
