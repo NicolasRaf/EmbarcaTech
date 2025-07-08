@@ -1,6 +1,6 @@
 # EmbarcaTech
 
-**EmbarcaTech** é um repositório que reúne códigos, projetos e exercícios desenvolvidos para o curso de capacitação em sistemas embarcados EmbarcaTech, realizado no IFPI. O objetivo deste repositório é fornecer exemplos práticos, estudos de caso e experimentos na área de sistemas embarcados, abrangendo desde conceitos básicos até aplicações mais avançadas utilizando linguagens como C/C++ e sistemas operacionais de tempo real como o FreeRTOS.
+Este repositório que reúne códigos, projetos e exercícios desenvolvidos para o curso de capacitação em sistemas embarcados EmbarcaTech, realizado no IFPI. O objetivo deste repositório é fornecer exemplos práticos, estudos de caso e experimentos na área de sistemas embarcados, abrangendo desde conceitos básicos até aplicações mais avançadas utilizando linguagens como C/C++ e sistemas operacionais de tempo real como o FreeRTOS.
 
 ## O que é o EmbarcaTech?
 
